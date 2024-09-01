@@ -1,2 +1,9 @@
 # schutz-server-raspi-express
-Möglichst schnelle Aussortierung von unerwünschten Requests mittels Hash.
+Möglichst schnelle Aussortierung von unerwünschten Requests mittels Hash.<br>
+Wenn man einen öffentlich erreichbaren Serer betreibt, kann theoretisch jeder Requests dorthin senden (Firewall bleibt hier unberücksichtigt). Viele gleichzeitig eingehenden Requests, mit denen eine aufwändige Bearbeitung der Daten einhergeht, z.B. Datenbank-Abgleich Checks, bringen einen Raspberrypi schnell an die Grenze der Leistungsfähigkeit.<br>
+Eine mögliche Lösung besteht darin, zusätzlich in die URL eine bestimmte Individualisierung zu schreiben, die mit einer schnellen Hash-Berechnung validiert werden kann (auch leicht mit dem Raspberrypi).<br>
+In meinem Beispiel sollen Sensor-Daten an den Express-Server geschickt werden. Dabei ist die sensorID (bei mir genau 10 Byte lang) nicht geheim und kann mit dem MD5 (oder SHA1) Hash Algorithmus zusammengesetzt werden. Die Addition der beiden Strings wird dann in der URL dem Request zugefügt. Die Überprüfung des URL-Abschnitts kann beim Server in einer Middleware erfolgen, die <bold>VOR<bold> jeder anderen zeitintensiven Operation (z.B. Datenbank-Abfrage) ausgeführt wird. So werden potentiell unerwünschte Requests schnell abgewiesen, die diese "Individualisierung" nicht haben.<br> 
+Bei einem API-Endpunkt mit der GET-Methode funktioniert die URL-Individualisierung als (Pseudo-Passwort).<br>
+Die server.js Datei ist ein praktisches Beispiel einer schnellen Hash-Berechnung zur Aussortierung von unerwünschten Requests als Demo-Server.Es werden nur 2 Module benötigt: crypto und express.<br>
+Die helper1.js Datei ist ein Beispiel, für die Hash-Berechnung.<br>
+Die helper2.js Datei ist ein Beispiel, um den laufenden Express-Server mehrere Requests gleichzeitig zu senden.<br>
